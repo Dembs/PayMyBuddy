@@ -31,8 +31,8 @@ CREATE TABLE IF NOT EXISTS `pay_my_buddy`.`user` (
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `pay_my_buddy`.`transaction` (
                                                             `id` INT NOT NULL AUTO_INCREMENT,
-                                                            `sender` INT NULL,
-                                                            `receiver` INT NULL,
+                                                            `sender` INT NOT NULL,
+                                                            `receiver` INT NOT NULL,
                                                             `description` VARCHAR(100) NOT NULL,
     `amount` DOUBLE NOT NULL,
     `date` DATETIME NOT NULL,

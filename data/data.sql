@@ -1,3 +1,5 @@
+SET FOREIGN_KEY_CHECKS = 0;
+
 -- Truncate tables to reset data
 TRUNCATE TABLE `pay_my_buddy`.`connections`;
 TRUNCATE TABLE `pay_my_buddy`.`transaction`;
@@ -46,3 +48,6 @@ INSERT INTO `pay_my_buddy`.`transaction` (`id`, `sender`, `receiver`, `descripti
 (12, 1, 3, 'Remboursement des courses', -75.00, '2024-01-12 21:00:00', 'TRANSFERT SORTANT'),
 (13, 2, 3, 'Part des frais du voyage', -25.00, '2024-01-13 22:00:00', 'TRANSFERT SORTANT'),
 (14, 2, 1, 'Paiement pour un restaurant', -50.00, '2024-01-14 23:00:00', 'TRANSFERT SORTANT');
+
+
+SET FOREIGN_KEY_CHECKS = 1;
