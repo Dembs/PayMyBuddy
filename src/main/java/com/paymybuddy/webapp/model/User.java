@@ -1,16 +1,19 @@
 package com.paymybuddy.webapp.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.sql.Connection;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @Entity
 @Setter
 @Getter
-@Table(name = "user")
+@Table(name = "users")
 public class User {
 
     @Id
@@ -29,18 +32,33 @@ public class User {
 
     // Relations
 
-    @OneToOne(mappedBy = "user_id",cascade = CascadeType.ALL)
+    @JsonManagedReference
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private Account account;
 
-    @OneToMany(mappedBy = "user_id", cascade = CascadeType.ALL)
-    private List<Connections> connections; // All connections initiated by this user
+    @JsonBackReference
+    @ManyToMany(
+            fetch = FetchType.LAZY)
+    @JoinTable(
+            name = "Connections",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "friend_id")
+    )
+    private List<User> connections = new ArrayList<>();
 
-    @OneToMany(mappedBy = "friend_id", cascade = CascadeType.ALL)
-    private List<Connections> friends; // All connections where this user is the friend
 
-    @OneToMany(mappedBy = "sender",cascade = CascadeType.ALL)
-    private List<Transaction> sentTransactions;
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        User user = (User) o;
+        return id == user.id &&
+                Objects.equals(username, user.username) &&
+                Objects.equals(email, user.email) &&
+                Objects.equals(password, user.password);
+    }
 
-    @OneToMany(mappedBy = "receiver",cascade = CascadeType.ALL)
-    private List<Transaction> receivedTransactions;
+    public int hashCode() {
+        return Objects.hash(id, username, email, password);
+    }
 }

@@ -1,9 +1,11 @@
 package com.paymybuddy.webapp.model;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.Date;
 
@@ -35,6 +37,8 @@ public class Transaction {
     @Column(name = "amount",nullable = false)
     private double amount;
 
+    @NotNull
     @Column(name = "date",nullable = false)
-    private LocalDateTime date;
+    private Timestamp date;
+
 }

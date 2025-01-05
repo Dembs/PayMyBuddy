@@ -15,15 +15,16 @@ CREATE SCHEMA IF NOT EXISTS `pay_my_buddy` DEFAULT CHARACTER SET utf8 ;
 USE `pay_my_buddy` ;
 
 -- -----------------------------------------------------
--- Table `pay_my_buddy`.`user`
+-- Table `pay_my_buddy`.`users`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `pay_my_buddy`.`user` (
-                                                     `id` INT NOT NULL AUTO_INCREMENT,
-                                                     `username` VARCHAR(100) NOT NULL,
+CREATE TABLE IF NOT EXISTS `pay_my_buddy`.`users` (
+                                                      `id` INT NOT NULL AUTO_INCREMENT,
+                                                      `username` VARCHAR(100) NOT NULL,
     `email` VARCHAR(100) NOT NULL,
     `password` VARCHAR(100) NOT NULL,
     PRIMARY KEY (`id`))
-    ENGINE = InnoDB;
+    ENGINE = InnoDB
+    DEFAULT CHARACTER SET = utf8mb3;
 
 
 -- -----------------------------------------------------
@@ -31,8 +32,8 @@ CREATE TABLE IF NOT EXISTS `pay_my_buddy`.`user` (
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `pay_my_buddy`.`transaction` (
                                                             `id` INT NOT NULL AUTO_INCREMENT,
-                                                            `sender` INT NOT NULL,
-                                                            `receiver` INT NOT NULL,
+                                                            `sender` INT NULL,
+                                                            `receiver` INT NULL,
                                                             `description` VARCHAR(100) NOT NULL,
     `amount` DOUBLE NOT NULL,
     `date` DATETIME NOT NULL,
@@ -42,12 +43,12 @@ CREATE TABLE IF NOT EXISTS `pay_my_buddy`.`transaction` (
     INDEX `fk_transaction_user2_idx` (`receiver` ASC) VISIBLE,
     CONSTRAINT `fk_transaction_user1`
     FOREIGN KEY (`sender`)
-    REFERENCES `pay_my_buddy`.`user` (`id`)
+    REFERENCES `pay_my_buddy`.`users` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION,
     CONSTRAINT `fk_transaction_user2`
     FOREIGN KEY (`receiver`)
-    REFERENCES `pay_my_buddy`.`user` (`id`)
+    REFERENCES `pay_my_buddy`.`users` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
     ENGINE = InnoDB;
@@ -63,7 +64,7 @@ CREATE TABLE IF NOT EXISTS `pay_my_buddy`.`account` (
     INDEX `fk_account_user_idx` (`user_id` ASC) VISIBLE,
     CONSTRAINT `fk_account_user`
     FOREIGN KEY (`user_id`)
-    REFERENCES `pay_my_buddy`.`user` (`id`)
+    REFERENCES `pay_my_buddy`.`users` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
     ENGINE = InnoDB;
@@ -78,7 +79,7 @@ CREATE TABLE IF NOT EXISTS `pay_my_buddy`.`connections` (
                                                             PRIMARY KEY (`user_id`, `friend_id`),
     CONSTRAINT `fk_connections_user1`
     FOREIGN KEY (`user_id`)
-    REFERENCES `pay_my_buddy`.`user` (`id`)
+    REFERENCES `pay_my_buddy`.`users` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
     ENGINE = InnoDB;
