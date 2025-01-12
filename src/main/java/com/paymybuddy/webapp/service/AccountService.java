@@ -15,7 +15,7 @@ public class AccountService {
     private AccountRepository accountRepository;
 
     public Account saveAccount(Account account) {
-        // Add validation if needed
+
         if (account.getUser() == null) {
             throw new IllegalArgumentException("Un compte doit être associé à un utilisateur");
         }

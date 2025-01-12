@@ -1,11 +1,7 @@
 package com.paymybuddy.webapp.service;
 
-import com.paymybuddy.webapp.dto.UserDTO;
-import com.paymybuddy.webapp.model.Account;
 import com.paymybuddy.webapp.model.User;
-import com.paymybuddy.webapp.repository.AccountRepository;
 import com.paymybuddy.webapp.repository.UserRepository;
-import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -29,6 +25,10 @@ public class UserService{
         return userRepository.findByEmail(email);
     }
 
+    public Optional<User> getUserById(int id){
+        return userRepository.findById(id);
+    }
+
     public Iterable<User> getAllUsers() {
         return userRepository.findAll();
     }
@@ -41,6 +41,7 @@ public class UserService{
         }
         throw new IllegalArgumentException("Utilisateur non trouvé avec l'ID : " + id);
     }
+
     public User updateUser(int id, User updatedUser) {
 
         User existingUser = userRepository.findById(id)
@@ -58,26 +59,14 @@ public class UserService{
         return userRepository.save(existingUser);
     }
 
-    @Transactional
-    public User registerNewUser(UserDTO userDTO) {
-        if (userRepository.existsByEmail(userDTO.getEmail())) {
-            throw new RuntimeException("Email already in use");
+    public User authenticateUser(String email,String password){
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        if (!user.getPassword().equals(password)) {
+            throw new RuntimeException("Invalid password");
         }
-
-        User user = new User();
-        user.setEmail(userDTO.getEmail());
-        user.setUsername(userDTO.getUsername());
-        user.setPassword(userDTO.getPassword());
-
-        User savedUser = userRepository.save(user);
-
-        // Create and associate an account
-        Account account = new Account();
-        account.setUser(savedUser);
-        accountService.saveAccount(account);
-
-        return savedUser;
+        return user;
     }
-
 }
 

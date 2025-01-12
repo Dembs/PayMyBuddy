@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Profile page</title>
+</head>
+<body>
+<div class ="profile-container">
+    <h2> Profile </h2>
+
+    <div class ="profile-info">
+        <p>Username:<span th:text="${user.username}"></span></p>
+        <p>Email:<span th:text="${user.email}"></span></p>
+        <p>AccountID:<span th:text="${user.account.id}"></span></p>
+
+    </div>
+
+</div>
+
+</body>
+</html>
