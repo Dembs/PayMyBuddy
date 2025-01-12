@@ -8,7 +8,7 @@ TRUNCATE TABLE `pay_my_buddy`.`users`;
 
 -- Insert data into User table
 INSERT INTO `pay_my_buddy`.`users` (`id`, `username`, `email`, `password`) VALUES
-                                                                              (1, 'johndoe', 'johndoe@example.com', 'password123'),
+                                                                              (1, 'johndoee', 'johndoe@example.com', 'password123'),
                                                                               (2, 'janedoe', 'janedoe@example.com', 'password456'),
                                                                               (3, 'bobsmith', 'bobsmith@example.com', 'password789');
 

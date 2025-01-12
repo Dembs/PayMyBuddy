@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("/users")
+@RequestMapping("/api/v1/users")
 public class UserController {
 
     @Autowired
@@ -19,7 +19,7 @@ public class UserController {
     @PostMapping
     public ResponseEntity<?> addUser(@RequestBody User user) {
         try {
-            User createdUser = userService.addUser(user);
+            User createdUser = userService.saveUser(user);
             return new ResponseEntity<>(createdUser, HttpStatus.CREATED);
         } catch (IllegalArgumentException e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
@@ -60,8 +60,8 @@ public class UserController {
     @PutMapping("/{id}")
     public ResponseEntity<?> updateUser(@PathVariable int id, @RequestBody User updatedUser) {
         try {
-            User user = userService.updateUser(id, updatedUser);
-            return new ResponseEntity<>(user, HttpStatus.OK);
+            User savedUser = userService.updateUser(id, updatedUser);
+            return new ResponseEntity<>(savedUser, HttpStatus.OK);
         } catch (IllegalArgumentException e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
         }

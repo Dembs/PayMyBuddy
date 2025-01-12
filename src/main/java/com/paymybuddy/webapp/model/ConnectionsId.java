@@ -14,6 +14,7 @@ import java.io.Serializable;
 @Getter
 @Setter
 public class ConnectionsId implements Serializable {
+
     @JsonManagedReference
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "user_id", referencedColumnName = "id")

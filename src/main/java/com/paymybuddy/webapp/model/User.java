@@ -40,13 +40,13 @@ public class User {
     @ManyToMany(
             fetch = FetchType.LAZY)
     @JoinTable(
-            name = "Connections",
-            joinColumns = @JoinColumn(name = "user_id"),
-            inverseJoinColumns = @JoinColumn(name = "friend_id")
+            name = "connections",
+            joinColumns = @JoinColumn(name = "user_id"), //ID de l'utilisateur
+            inverseJoinColumns = @JoinColumn(name = "friend_id") //ID de l'ami
     )
     private List<User> connections = new ArrayList<>();
 
-
+    /*
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -60,5 +60,5 @@ public class User {
 
     public int hashCode() {
         return Objects.hash(id, username, email, password);
-    }
+    }*/
 }
