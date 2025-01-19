@@ -8,9 +8,9 @@ TRUNCATE TABLE `pay_my_buddy`.`users`;
 
 -- Insert data into User table
 INSERT INTO `pay_my_buddy`.`users` (`id`, `username`, `email`, `password`) VALUES
-                                                                              (1, 'johndoee', 'johndoe@example.com', 'password123'),
-                                                                              (2, 'janedoe', 'janedoe@example.com', 'password456'),
-                                                                              (3, 'bobsmith', 'bobsmith@example.com', 'password789');
+                                                                              (1, 'johndoee', 'johndoe@example.com', '$2a$08$rLQedjiTzGOymtJ5PBpKheFGfHhM51oQu7bq9Gh/ABbhU0VIP5Fna'), /*password123*/
+                                                                              (2, 'janedoe', 'janedoe@example.com', '$2a$08$PgZf4X85v0CxL4NzbGMQdO/k1aNmDR0heIXESCdr7qDBaTw.gjM9S'),/*password456*/
+                                                                              (3, 'bobsmith', 'bobsmith@example.com', '$2a$08$2lzqBpJzmX37b2YfEj/eTebqfifq04mr9zYSAL3ebywYpWByZZty.');/*password789*/
 
 -- Insert data into Account table
 INSERT INTO `pay_my_buddy`.`account` (`id`, `user_id`) VALUES

@@ -1,12 +1,18 @@
 package com.paymybuddy.webapp.model;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 
@@ -14,7 +20,7 @@ import java.util.Objects;
 @Setter
 @Getter
 @Table(name = "users")
-public class User {
+public class User implements UserDetails {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -27,7 +33,9 @@ public class User {
     @Column(name = "email",nullable = false,unique = true)
     private String email;
 
-    @Column(name = "password",nullable = false)
+    @ToString.Exclude
+    @JsonIgnore
+    @Column(name = "password")
     private String password;
 
     // Relations
@@ -46,19 +54,37 @@ public class User {
     )
     private List<User> connections = new ArrayList<>();
 
-    /*
     @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        User user = (User) o;
-        return id == user.id &&
-                Objects.equals(username, user.username) &&
-                Objects.equals(email, user.email) &&
-                Objects.equals(password, user.password);
+    public Collection<? extends GrantedAuthority> getAuthorities(){
+        return List.of(new SimpleGrantedAuthority("ROLE_USER"));
     }
 
-    public int hashCode() {
-        return Objects.hash(id, username, email, password);
-    }*/
+    @Override
+    public String getUsername(){
+        return this.email;
+    }
+
+    public String getRealUsername(){
+        return this.username;
+    }
+
+    @Override
+    public boolean isAccountNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isAccountNonLocked() {
+        return true;
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return true;
+    }
 }

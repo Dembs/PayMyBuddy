@@ -1,20 +1,58 @@
 package com.paymybuddy.webapp.service;
 
+import com.paymybuddy.webapp.dto.UserDTO;
 import com.paymybuddy.webapp.model.User;
 import com.paymybuddy.webapp.repository.UserRepository;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 
 @Service
-public class UserService{
-
-    @Autowired
-    private UserRepository userRepository;
+public class UserService implements UserDetailsService {
 
     @Autowired
     private AccountService accountService;
+
+   /* @Autowired
+    private UserRepository userRepository;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;*/
+
+    private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
+
+    public UserService(UserRepository userRepository,
+                       @Lazy PasswordEncoder passwordEncoder){
+        this.userRepository = userRepository;
+        this.passwordEncoder = passwordEncoder;
+    }
+
+    @Override
+    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
+        return userRepository.findByEmail(email)
+                .orElseThrow(() -> new UsernameNotFoundException("Utilisateur introuvable"));
+    }
+
+    @Transactional
+    public User registerNewUser(UserDTO userDTO){
+        if(userRepository.existsByEmail(userDTO.getEmail())){
+            throw new RuntimeException("Addresse Mail déjà utilisée");
+        }
+        User user = new User();
+        user.setEmail(userDTO.getEmail());
+        user.setUsername(userDTO.getUsername());
+        user.setPassword(passwordEncoder.encode(userDTO.getPassword()));
+
+        return userRepository.save(user);
+    }
 
     public User saveUser(User user){
 
@@ -50,23 +88,8 @@ public class UserService{
         existingUser.setUsername(updatedUser.getUsername());
         existingUser.setEmail(updatedUser.getEmail());
 
-       /* // Only update password if a new password is provided
-        if (updatedUser.getPassword() != null && !updatedUser.getPassword().isEmpty()) {
-            existingUser.setPassword(updatedUser.getPassword());
-        }*/
-
-        // Save and return the updated user
         return userRepository.save(existingUser);
     }
 
-    public User authenticateUser(String email,String password){
-        User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new RuntimeException("User not found"));
-
-        if (!user.getPassword().equals(password)) {
-            throw new RuntimeException("Invalid password");
-        }
-        return user;
-    }
 }
 
