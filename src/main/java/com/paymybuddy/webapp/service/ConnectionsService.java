@@ -17,7 +17,7 @@ public class ConnectionsService {
     @Transactional
     public void addConnection(User user, String friendEmail){
         User friend = userRepository.findByEmail(friendEmail)
-                .orElseThrow(()-> new RuntimeException("Email " + friendEmail + " introuvable"));
+                .orElseThrow(()-> new RuntimeException(friendEmail + " introuvable"));
 
         //Check to see if the connection already exists
         if(user.getConnections().contains(friend)){

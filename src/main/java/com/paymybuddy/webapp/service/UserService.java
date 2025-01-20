@@ -54,6 +54,72 @@ public class UserService implements UserDetailsService {
         return userRepository.save(user);
     }
 
+    @Transactional
+    public void updateUsername(int userId, String newUsername) {
+        User user = userRepository.findById(userId)
+                                  .orElseThrow(() -> new RuntimeException("Utilisateur non trouvé"));
+
+        // Vérifier si le username n'est pas déjà utilisé
+        if (userRepository.existsByUsername(newUsername) &&
+                !user.getUsername().equals(newUsername)) {
+            throw new RuntimeException("Ce nom d'utilisateur est déjà utilisé");
+        }
+
+        user.setUsername(newUsername);
+        userRepository.save(user);
+    }
+
+    @Transactional
+    public void updateEmail(int userId, String newEmail) {
+        User user = userRepository.findById(userId)
+                                  .orElseThrow(() -> new RuntimeException("Utilisateur non trouvé"));
+
+        // Vérifier si l'email n'est pas déjà utilisé
+        if (userRepository.existsByEmail(newEmail) &&
+                !user.getEmail().equals(newEmail)) {
+            throw new RuntimeException("Cet email est déjà utilisé");
+        }
+
+        user.setEmail(newEmail);
+        userRepository.save(user);
+    }
+
+
+    @Transactional
+    public void updateUserProfile(int userId, String username, String email) {
+        User user = userRepository.findById(userId)
+                                  .orElseThrow(() -> new RuntimeException("Utilisateur non trouvé"));
+
+        // Vérifier si l'email est déjà utilisé par un autre utilisateur
+        if (!user.getEmail().equals(email) && userRepository.existsByEmail(email)) {
+            throw new RuntimeException("Cet email est déjà utilisé");
+        }
+
+        user.setUsername(username);
+        user.setEmail(email);
+        userRepository.save(user);
+    }
+
+    @Transactional
+    public void updatePassword(int userId, String currentPassword, String newPassword) {
+        User user = userRepository.findById(userId)
+                                  .orElseThrow(() -> new RuntimeException("Utilisateur non trouvé"));
+
+        // Vérifier l'ancien mot de passe
+        if (!passwordEncoder.matches(currentPassword, user.getPassword())) {
+            throw new RuntimeException("Mot de passe actuel incorrect");
+        }
+
+        // Encoder et sauvegarder le nouveau mot de passe
+        user.setPassword(passwordEncoder.encode(newPassword));
+        userRepository.save(user);
+    }
+
+    @Transactional
+    public User getUserById(int userId) {
+        return userRepository.findById(userId)
+                             .orElseThrow(() -> new RuntimeException("Utilisateur non trouvé"));
+    }
     public User saveUser(User user){
 
         return userRepository.save(user);
@@ -63,9 +129,7 @@ public class UserService implements UserDetailsService {
         return userRepository.findByEmail(email);
     }
 
-    public Optional<User> getUserById(int id){
-        return userRepository.findById(id);
-    }
+
 
     public Iterable<User> getAllUsers() {
         return userRepository.findAll();

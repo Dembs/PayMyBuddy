@@ -1,26 +1,105 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <title>Profile page</title>
 </head>
 <body>
-<div class ="profile-container">
+<div class="profile-container">
     <div class="nav-bar">
-        <a th:href="@{/transfer}" >Transférer</a>
-        <a th:href="@{/profile}" >Profil</a>
-        <a th:href="@{/connections}" >Ajouter Relation</a>
-        <a th:href="@{/logout}" >Se déconnecter</a>
-    </div>
-    <h2> Profile </h2>
-    <div class ="profile-info">
-        <p>Username:<span th:text="${user.username}"></span></p>
-        <p>Mail:<span th:text="${user.email}"></span></p>
-        <p>AccountID:<span th:text="${user.account.id}"></span></p>
-
+        <a th:href="@{/transfer}">Transférer</a>
+        <a th:href="@{/profile}" class="active">Profil</a>
+        <a th:href="@{/connections}">Ajouter Relation</a>
+        <a th:href="@{/logout}">Se déconnecter</a>
     </div>
 
+    <h2>Mon Profil</h2>
+
+    <div th:if="${successMessage}" class="alert success" th:text="${successMessage}"></div>
+    <div th:if="${errorMessage}" class="alert error" th:text="${errorMessage}"></div>
+
+    <div class="field-group">
+        <label>Username:</label>
+        <div class="display-mode" id="username-display">
+            <span th:text="${user.getRealUsername()}"></span>
+            <button type="button" onclick="showEditMode('username')" class="edit-btn">Modifier</button>
+        </div>
+        <div class="edit-mode" id="username-edit" style="display:none">
+            <form th:action="@{/profile/update}" method="post">
+                <input type="text" name="username" th:value="${user.getRealUsername()}">
+                <button type="submit">Valider</button>
+                <button type="button" onclick="showDisplayMode('username')">Annuler</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Email -->
+    <div class="field-group">
+        <label>Email:</label>
+        <div class="display-mode" id="email-display">
+            <span th:text="${user.email}"></span>
+            <button type="button" onclick="showEditMode('email')" class="edit-btn">Modifier</button>
+        </div>
+        <div class="edit-mode" id="email-edit" style="display:none">
+            <form th:action="@{/profile/update}" method="post">
+                <input type="email" name="email" th:value="${user.email}">
+                <button type="submit">Valider</button>
+                <button type="button" onclick="showDisplayMode('email')">Annuler</button>
+            </form>
+        </div>
+    </div>
+
+    <div class="field-group">
+        <label>Mot de passe:</label>
+        <div class="display-mode" th:id="password-display">
+            <span>••••••••</span>
+            <button onclick="showEditMode('password')" class="edit-btn">Modifier</button>
+        </div>
+        <div class="edit-mode" th:id="password-edit" style="display:none">
+            <form th:action="@{/profile/password}" method="post">
+                <div class="password-fields">
+                    <div class="form-field">
+                        <label>Mot de passe actuel:</label>
+                        <input type="password" name="currentPassword" required>
+                    </div>
+                    <div class="form-field">
+                        <label>Nouveau mot de passe:</label>
+                        <input type="password" name="newPassword" id="newPassword" required>
+                    </div>
+                    <div class="form-field">
+                        <label>Confirmer le nouveau mot de passe:</label>
+                        <input type="password" name="confirmPassword" id="confirmPassword" required>
+                    </div>
+                </div>
+                <div class="button-group">
+                    <button type="submit" onclick="return validatePasswords()">Valider</button>
+                    <button type="button" onclick="showDisplayMode('password')">Annuler</button>
+                </div>
+            </form>
+        </div>
+    </div>
 </div>
+<script>
+    function showEditMode(field) {
+        document.getElementById(field + '-display').style.display = 'none';
+        document.getElementById(field + '-edit').style.display = 'block';
+    }
 
+    function showDisplayMode(field) {
+        document.getElementById(field + '-display').style.display = 'flex';
+        document.getElementById(field + '-edit').style.display = 'none';
+    }
+
+    function validatePasswords() {
+        const newPassword = document.getElementById('newPassword').value;
+        const confirmPassword = document.getElementById('confirmPassword').value;
+
+        if (newPassword !== confirmPassword) {
+            alert('Les mots de passe ne correspondent pas');
+            return false;
+        }
+        return true;
+    }
+</script>
 </body>
 </html>

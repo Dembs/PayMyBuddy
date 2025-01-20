@@ -46,11 +46,11 @@ public class User implements UserDetails {
 
     @JsonBackReference
     @ManyToMany(
-            fetch = FetchType.LAZY)
+            fetch = FetchType.EAGER)
     @JoinTable(
             name = "connections",
-            joinColumns = @JoinColumn(name = "user_id"), //ID de l'utilisateur
-            inverseJoinColumns = @JoinColumn(name = "friend_id") //ID de l'ami
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "friend_id")
     )
     private List<User> connections = new ArrayList<>();
 

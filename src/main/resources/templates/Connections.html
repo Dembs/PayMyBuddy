@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <title>Page d'ajout de relation</title>
@@ -13,12 +13,10 @@
 </div>
 <div class="container">
     <h2>Chercher une relation</h2>
-    <!-- Success Message -->
     <div th:if="${successMessage}" class="message success">
         <p th:text="${successMessage}"></p>
     </div>
 
-    <!-- Error Message -->
     <div th:if="${errorMessage}" class="message error">
         <p th:text="${errorMessage}"></p>
     </div>
@@ -28,9 +26,31 @@
             <input type="email" id="email" name="email" required
                    placeholder="Saisir une adresse mail">
         </div>
-
         <button type="submit">Ajouter</button>
     </form>
+
+    <div class="connections-list">
+        <h3>Mes Relations</h3>
+
+        <div th:if="${#lists.isEmpty(connections)}" class="no-connections">
+            <p>Vous n'avez pas encore de relations</p>
+        </div>
+
+        <table th:if="${!#lists.isEmpty(connections)}" class="connections-table">
+            <thead>
+            <tr>
+                <th>Nom d'utilisateur</th>
+                <th>Email</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="connection : ${connections}">
+                <td th:text="${connection.getRealUsername()}"></td>
+                <td th:text="${connection.email}"></td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
 </div>
 </body>
 </html>

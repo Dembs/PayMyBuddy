@@ -15,6 +15,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import java.util.List;
+
 @Controller
 @RequestMapping("/connections")
 public class ConnectionsController {
@@ -26,8 +28,6 @@ public class ConnectionsController {
     private ConnectionsService connectionsService;
 
  */
-    @Autowired
-    private UserRepository userRepository;
 
     private final UserService userService;
     private final ConnectionsService connectionsService;
@@ -40,26 +40,25 @@ public class ConnectionsController {
     }
 
     @GetMapping
-    public String showConnectionForm (Model model){
+    public String showConnectionForm (Model model, @AuthenticationPrincipal User user){
+        List<User> connections = user.getConnections();
+        model.addAttribute("connections",connections);
         return "/connections";
     }
 
     @PostMapping
     public String processConnection(@RequestParam String email,
                                     Model model,
-                                    @AuthenticationPrincipal UserDetails userDetails){
+                                    @AuthenticationPrincipal User user){
 
         try {
-            User currentUser = userRepository.findByEmail(userDetails.getUsername())
-                                          .orElseThrow(() -> new RuntimeException("Utilisateur introuvable"));
-
-            connectionsService.addConnection(currentUser, email);
+            connectionsService.addConnection(user,email);
             model.addAttribute("successMessage", "Relation Rajoutée avec succes");
-            return "connections";
 
         } catch (RuntimeException e) {
             model.addAttribute("errorMessage", e.getMessage());
-            return "connections";
         }
+        model.addAttribute("connections",user.getConnections());
+        return "connections";
     }
 }
