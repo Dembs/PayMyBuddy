@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Transfer Page</title>
+</head>
+<body>
+<div class="nav-bar">
+    <a th:href="@{/transfer}" class="active">Transférer</a>
+    <a th:href="@{/profile}">Profil</a>
+    <a th:href="@{/connections}">Ajouter Relation</a>
+    <a th:href="@{/logout}">Se déconnecter</a>
+</div>
+
+<div class="container">
+
+    <div class="balance-section">
+        <h3>Solde du compte</h3>
+        <p class="balance-amount" th:text="${#numbers.formatDecimal(balance, 1, 2) + ' €'}">0.00 €</p>
+    </div>
+
+</div>
+
+</body>
+</html>

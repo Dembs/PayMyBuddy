@@ -14,6 +14,8 @@ public class AccountService {
     @Autowired
     private AccountRepository accountRepository;
 
+    @Autowired
+    private TransactionService transactionService;
     public Account saveAccount(Account account) {
 
         if (account.getUser() == null) {
@@ -51,6 +53,4 @@ public class AccountService {
         // Save and return the updated account
         return accountRepository.save(existingAccount);
     }
-
-
 }
