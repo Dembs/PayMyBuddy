@@ -67,25 +67,18 @@ public class TransactionService {
 
     public double getUserBalance(int userId){
         //select sum(amount) from transaction where sender = 1 or receiver = 1;
-        List<Transaction> transactions = transactionRepository.findBySenderIdOrReceiverId(userId, userId);
+        List<Transaction> transactions = transactionRepository.findBySenderIdOrReceiverIdOrderByDateDesc(userId);
+        double balance = 0.0;
 
-        return transactions.stream()
-           .mapToDouble(transaction -> {
-               // Si l'utilisateur est le destinataire et que c'est un transfert entrant ou virement rentrant
-               if (transaction.getReceiver().getId() == userId &&
-                       (transaction.getType().equals("TRANSFERT ENTRANT") ||
-                               transaction.getType().equals("VIREMENT RENTRANT"))) {
-                   return transaction.getAmount();
-               }
-
-               // Si l'utilisateur est l'expéditeur et que c'est un transfert sortant ou virement sortant
-               else if (transaction.getSender().getId() == userId &&
-                       (transaction.getType().equals("TRANSFERT SORTANT") ||
-                               transaction.getType().equals("VIREMENT SORTANT"))) {
-                   return transaction.getAmount();
-               }
-               return 0.0; // 0 si aucun cas
-           })
-           .sum();
+        for (Transaction transaction : transactions) {
+            if (transaction.getReceiver().getId() == userId ||
+                    transaction.getSender().getId() == userId) {
+                balance += transaction.getAmount();
+            }
+        }
+        return balance;
+    }
+    public List<Transaction> getTransactionByUser(int userId){
+        return transactionRepository.findBySenderIdOrReceiverIdOrderByDateDesc(userId);
     }
 }

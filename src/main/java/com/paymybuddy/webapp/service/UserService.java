@@ -84,22 +84,6 @@ public class UserService implements UserDetailsService {
         userRepository.save(user);
     }
 
-
-    @Transactional
-    public void updateUserProfile(int userId, String username, String email) {
-        User user = userRepository.findById(userId)
-                                  .orElseThrow(() -> new RuntimeException("Utilisateur non trouvé"));
-
-        // Vérifier si l'email est déjà utilisé par un autre utilisateur
-        if (!user.getEmail().equals(email) && userRepository.existsByEmail(email)) {
-            throw new RuntimeException("Cet email est déjà utilisé");
-        }
-
-        user.setUsername(username);
-        user.setEmail(email);
-        userRepository.save(user);
-    }
-
     @Transactional
     public void updatePassword(int userId, String currentPassword, String newPassword) {
         User user = userRepository.findById(userId)
