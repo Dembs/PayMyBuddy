@@ -20,7 +20,7 @@
     </div>
     <div class="transfer-form">
         <h3>Effectuer une opération</h3>
-        <form th:action="@{/transfert/add}" method="post">
+        <form th:action="@{/transfert/add}" method="post" onsubmit="return confirmTransaction(event)">
             <div class="form-group">
                 <label for="type">Type d'opération:</label>
                 <select id="type" name="type" onchange="updateFormFields()">
@@ -32,7 +32,7 @@
 
             <div id="connection-field" style="display:none">
                 <label for="receiver">Destinataire:</label>
-                <select id="receiver" name="receiverId">
+                <select id="receiver" name="receiverId" required>
                     <option value="">Sélectionnez une relation</option>
                     <th:block th:each="connection : ${user.connections}">
                         <option th:value="${connection.id}" th:text="${connection.getRealUsername()}"></option>
@@ -84,9 +84,7 @@
 
                 <td th:text="${transaction.type.startsWith('VIREMENT') ?
                      'Ma banque' :
-                     (user.getId() == transaction.getSender().getId() ?
-                      transaction.getReceiver().getRealUsername() :
-                      transaction.getSender().getRealUsername())}">
+                      transaction.getReceiver().getRealUsername()}">
                 </td>
                 <td th:text="${transaction.description}"></td>
                 <td th:text="${#dates.format(transaction.date,'dd/MM/yyyy HH:mm')}"></td>
@@ -106,15 +104,52 @@
         const type = document.getElementById('type').value;
         const connectionField = document.getElementById('connection-field');
         const descriptionField = document.getElementById('description-field');
+        const receiverSelect = document.getElementById('receiver');
 
         if (type === 'TRANSFERT') {
             connectionField.style.display = 'block';
             descriptionField.style.display = 'block';
+            receiverSelect.required = true;
         } else if (type.includes('VIREMENT')) {
             connectionField.style.display = 'none';
             descriptionField.style.display = 'none';
+            receiverSelect.required = false;
             document.getElementById('description').value = type;
         }
+    }
+    function confirmTransaction(event) {
+        const balance = [[${balance}]];
+        event.preventDefault(); // Empêche l'envoi immédiat du formulaire
+
+        const amount = parseFloat(document.getElementById('amount').value);
+        const type = document.getElementById('type').value;
+        const totalAmount = type === 'TRANSFERT' ? amount * 1.005 : amount;
+
+        let message;
+
+    // Vérification du solde pour les opérations sortantes
+        if ((type === 'TRANSFERT' || type === 'VIREMENT SORTANT') && totalAmount > balance) {
+            alert(`Solde insuffisant ! Votre solde actuel est de ${balance.toFixed(2)}€`);
+            return false;
+        }
+
+        if (type === 'TRANSFERT') {
+            const receiver = document.getElementById('receiver');
+            if (!receiver.value) {
+                alert('Veuillez sélectionner un destinataire');
+                return false;
+            }
+            const receiverName = receiver.options[receiver.selectedIndex].text; // récupère le texte qui correspond à l'index choisit
+            message = `Confirmez-vous le transfert de ${(amount/1.005).toFixed(2)}€ (0.5% de frais) vers ${receiverName} ?`;
+        } else {
+            message = `Confirmez-vous le ${type.toLowerCase()} de ${amount.toFixed(2)}€ ?`;
+        }
+
+        if (confirm(message)) {
+            event.target.submit(); // Envoie le formulaire si confirmé
+            return true;
+        }
+        return false;
     }
 </script>
 </html>

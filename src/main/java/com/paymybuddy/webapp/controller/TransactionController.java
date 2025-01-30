@@ -49,26 +49,34 @@ public class TransactionController {
                                  @RequestParam(required = false) Integer receiverId,
                                  RedirectAttributes redirectAttributes) {
         try {
-            // Vérification que le montant est positif
-            if (amount <= 0) {
+
+           /*if (amount <= 0) {
                 throw new IllegalArgumentException("Le montant doit être positif");
-            }
+            }*/
+
             User currentUser = userService.getUserById(user.getId());
+            double balance = transactionService.getUserBalance(currentUser.getId());
             Transaction transaction = new Transaction();
             transaction.setType(type);
             transaction.setSender(currentUser);
             transaction.setDate(new Timestamp(System.currentTimeMillis()));
 
-            // Le signe du montant est géré ici, pas dans l'input
+            // Vérification du solde pour les opérations sortantes
+            if ((type.equals("VIREMENT SORTANT") || type.equals("TRANSFERT"))
+                    && amount > balance) {
+                throw new IllegalArgumentException("Solde insuffisant pour effectuer cette opération");
+            }
+
+            // Montant négatif pour les virements sortants et les transferts
             if (type.contains("VIREMENT")) {
                 transaction.setReceiver(currentUser);
                 transaction.setDescription(type);
-                transaction.setAmount(type.equals("VIREMENT SORTANT") ? -amount : amount);
+                transaction.setAmount(type.equals("VIREMENT SORTANT") ? -amount/1.005: amount/1.005) ;//+0.5% de frais
             } else if (type.equals("TRANSFERT")) {
                 User receiver = userService.getUserById(receiverId);
                 transaction.setReceiver(receiver);
                 transaction.setDescription(description);
-                transaction.setAmount(-amount); // Transfert sortant
+                transaction.setAmount(-amount/1.005); // Transfert sortant
             }
 
             transactionService.saveTransaction(transaction);
