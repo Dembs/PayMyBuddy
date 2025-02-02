@@ -77,21 +77,40 @@
                 <th>Description</th>
                 <th>Date</th>
                 <th>Montant</th>
+                <th>Frais</th>
             </tr>
             </thead>
             <tbody>
             <tr th:each="transaction : ${transactions}">
 
-                <td th:text="${transaction.type.startsWith('VIREMENT') ?
+                <td th:text="${transaction.type.contains('VIREMENT') ?
                      'Ma banque' :
-                      transaction.getReceiver().getRealUsername()}">
+                      (transaction.type == 'TRANSFERT ENTRANT' ?
+                            transaction.sender.getRealUsername() :
+                            transaction.receiver.getRealUsername())}">
                 </td>
                 <td th:text="${transaction.description}"></td>
                 <td th:text="${#dates.format(transaction.date,'dd/MM/yyyy HH:mm')}"></td>
                 <td th:text="${#numbers.formatDecimal(transaction.amount, 1, 2,'POINT') + ' €'}"></td>
+                <td th:text="${transaction.type == 'TRANSFERT ENTRANT' ? '0.00 €':#numbers.formatDecimal(transaction.fee, 1, 2) + ' €'}"></td>
             </tr>
             </tbody>
         </table>
+    </div>
+    <div class="pagination" th:if="${!#lists.isEmpty(transactions)}">
+        <a th:if="${currentPage > 0}"
+           th:href="@{/transfert(page=${currentPage - 1})}"
+           class="pagination-button">
+            &laquo; Précédent
+        </a>
+
+        <span class="current-page" th:text="${currentPage + 1}"></span>
+
+        <a th:if="${currentPage + 1 < totalPages}"
+           th:href="@{/transfert(page=${currentPage + 1})}"
+           class="pagination-button">
+            Suivant &raquo;
+        </a>
     </div>
 </div>
 
@@ -123,26 +142,31 @@
 
         const amount = parseFloat(document.getElementById('amount').value);
         const type = document.getElementById('type').value;
-        const totalAmount = type === 'TRANSFERT' ? amount * 1.005 : amount;
+        const fee = amount * 0.005;
+        const totalAmount = amount + fee;
 
         let message;
 
     // Vérification du solde pour les opérations sortantes
         if ((type === 'TRANSFERT' || type === 'VIREMENT SORTANT') && totalAmount > balance) {
-            alert(`Solde insuffisant ! Votre solde actuel est de ${balance.toFixed(2)}€`);
+            alert(`Solde insuffisant pour effectuer cette opération\n\n` +
+                `Solde actuel : ${balance.toFixed(2)}€\n` +
+                `Montant demandé : ${amount.toFixed(2)}€\n` +
+                `Frais : ${fee.toFixed(2)}€\n` +
+                `Total nécessaire : ${totalAmount.toFixed(2)}€`);
             return false;
         }
 
         if (type === 'TRANSFERT') {
             const receiver = document.getElementById('receiver');
-            if (!receiver.value) {
-                alert('Veuillez sélectionner un destinataire');
-                return false;
-            }
-            const receiverName = receiver.options[receiver.selectedIndex].text; // récupère le texte qui correspond à l'index choisit
-            message = `Confirmez-vous le transfert de ${(amount/1.005).toFixed(2)}€ (0.5% de frais) vers ${receiverName} ?`;
+            const receiverName = receiver.options[receiver.selectedIndex].text;
+            message = `Confirmez-vous le transfert de ${amount.toFixed(2)}€ vers ${receiverName} ?\n` +
+                `Frais de service : ${fee.toFixed(2)}€\n` +
+                `Total : ${totalAmount.toFixed(2)}€`;
         } else {
-            message = `Confirmez-vous le ${type.toLowerCase()} de ${amount.toFixed(2)}€ ?`;
+            message = `Confirmez-vous le ${type.toLowerCase()} de ${amount.toFixed(2)}€ ?\n` +
+                `Frais de service : ${fee.toFixed(2)}€\n` +
+                `Total : ${totalAmount.toFixed(2)}€`;
         }
 
         if (confirm(message)) {

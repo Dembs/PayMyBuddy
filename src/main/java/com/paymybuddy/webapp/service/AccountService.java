@@ -14,8 +14,7 @@ public class AccountService {
     @Autowired
     private AccountRepository accountRepository;
 
-    @Autowired
-    private TransactionService transactionService;
+
     public Account saveAccount(Account account) {
 
         if (account.getUser() == null) {

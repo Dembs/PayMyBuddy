@@ -17,15 +17,6 @@ import java.util.Optional;
 @Service
 public class UserService implements UserDetailsService {
 
-    @Autowired
-    private AccountService accountService;
-
-   /* @Autowired
-    private UserRepository userRepository;
-
-    @Autowired
-    private PasswordEncoder passwordEncoder;*/
-
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
 

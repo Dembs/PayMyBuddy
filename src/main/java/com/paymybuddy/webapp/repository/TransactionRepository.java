@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import org.springframework.data.domain.Pageable;
 import java.util.List;
 
 @Repository
@@ -15,7 +16,16 @@ public interface TransactionRepository extends JpaRepository<Transaction, Intege
 
     List<Transaction> findByReceiverId(int receiverId);
 
+    @Query("SELECT t FROM Transaction t WHERE (t.sender.id = :userId AND (t.type = 'TRANSFERT SORTANT' OR t.type LIKE 'VIREMENT%')) " +
+                    "OR (t.receiver.id = :userId AND t.type = 'TRANSFERT ENTRANT') " +
+                    "ORDER BY t.date DESC")
+    List<Transaction> findBySenderIdOrReceiverId(@Param("userId") int userId, Pageable pageable);
+    // Méthode pour le calcul du solde (sans pagination)
+    @Query("SELECT t FROM Transaction t WHERE (t.sender.id = :userId AND (t.type = 'TRANSFERT SORTANT' OR t.type LIKE 'VIREMENT%')) " +
+            "OR (t.receiver.id = :userId AND t.type = 'TRANSFERT ENTRANT') ")
+    List<Transaction> findAllBySenderIdOrReceiverId(@Param("userId") int userId);
 
-    @Query("Select t from Transaction t where t.sender.id = :userId OR t.receiver.id = :userId order by t.date desc")
-    List<Transaction> findBySenderIdOrReceiverIdOrderByDateDesc(@Param("userId") int userId);
+    @Query("SELECT COUNT(t) FROM Transaction t WHERE (t.sender.id = :userId AND (t.type = 'TRANSFERT SORTANT' OR t.type LIKE 'VIREMENT%')) " +
+            "OR (t.receiver.id = :userId AND t.type = 'TRANSFERT ENTRANT')")
+    long countBySenderIdOrReceiverId(@Param("userId") int userId);
 }

@@ -35,6 +35,9 @@ public class Transaction {
     @Column(name = "amount",nullable = false)
     private double amount;
 
+    @Column(name = "fee",nullable = false, insertable = false)
+    private double fee;
+
     @NotNull
     @Column(name = "date",nullable = false)
     private Timestamp date;
