@@ -32,18 +32,6 @@ public class UserService implements UserDetailsService {
                 .orElseThrow(() -> new UsernameNotFoundException("Utilisateur introuvable"));
     }
 
-    @Transactional
-    public User registerNewUser(UserDTO userDTO){
-        if(userRepository.existsByEmail(userDTO.getEmail())){
-            throw new RuntimeException("Addresse Mail déjà utilisée");
-        }
-        User user = new User();
-        user.setEmail(userDTO.getEmail());
-        user.setUsername(userDTO.getUsername());
-        user.setPassword(passwordEncoder.encode(userDTO.getPassword()));
-
-        return userRepository.save(user);
-    }
 
     @Transactional
     public void updateUsername(int userId, String newUsername) {
@@ -79,7 +67,22 @@ public class UserService implements UserDetailsService {
     public void updatePassword(int userId, String currentPassword, String newPassword) {
         User user = userRepository.findById(userId)
                                   .orElseThrow(() -> new RuntimeException("Utilisateur non trouvé"));
+        //Nouveau et ancien mot de passe pas vide
+        if (currentPassword == null) {
+            throw new IllegalArgumentException("Le mot de passe actuel est requis");
+        }
+        if (newPassword == null) {
+            throw new IllegalArgumentException("Le nouveau mot de passe est requis");
+        }
+        //longueur du mot de passe
+        if (newPassword.length() < 8) {
+            throw new IllegalArgumentException("Le nouveau mot de passe doit contenir au moins 8 caractères");
+        }
 
+        // nouveau mot de passe différent de l'ancien
+        if (currentPassword.equals(newPassword)) {
+            throw new IllegalArgumentException("Le nouveau mot de passe doit être différent de l'ancien");
+        }
         // Vérifier l'ancien mot de passe
         if (!passwordEncoder.matches(currentPassword, user.getPassword())) {
             throw new RuntimeException("Mot de passe actuel incorrect");
@@ -95,40 +98,7 @@ public class UserService implements UserDetailsService {
         return userRepository.findById(userId)
                              .orElseThrow(() -> new RuntimeException("Utilisateur non trouvé"));
     }
-    public User saveUser(User user){
 
-        return userRepository.save(user);
-    }
-
-    public Optional<User> getUserByEmail(String email){
-        return userRepository.findByEmail(email);
-    }
-
-
-
-    public Iterable<User> getAllUsers() {
-        return userRepository.findAll();
-    }
-
-    public boolean deleteUser(int id) {
-        Optional<User> existingUser = userRepository.findById(id);
-        if (existingUser.isPresent()) {
-            userRepository.deleteById(id);
-            return true;
-        }
-        throw new IllegalArgumentException("Utilisateur non trouvé avec l'ID : " + id);
-    }
-
-    public User updateUser(int id, User updatedUser) {
-
-        User existingUser = userRepository.findById(id)
-                                          .orElseThrow(() -> new IllegalArgumentException("Utilisateur non trouvé avec l'ID : " + id));
-
-        existingUser.setUsername(updatedUser.getUsername());
-        existingUser.setEmail(updatedUser.getEmail());
-
-        return userRepository.save(existingUser);
-    }
 
 }
 

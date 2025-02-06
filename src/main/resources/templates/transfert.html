@@ -152,7 +152,7 @@
             alert(`Solde insuffisant pour effectuer cette opération\n\n` +
                 `Solde actuel : ${balance.toFixed(2)}€\n` +
                 `Montant demandé : ${amount.toFixed(2)}€\n` +
-                `Frais : ${fee.toFixed(2)}€\n` +
+                `Frais de service (0.5%): ${fee.toFixed(2)}€\n` +
                 `Total nécessaire : ${totalAmount.toFixed(2)}€`);
             return false;
         }
@@ -161,11 +161,11 @@
             const receiver = document.getElementById('receiver');
             const receiverName = receiver.options[receiver.selectedIndex].text;
             message = `Confirmez-vous le transfert de ${amount.toFixed(2)}€ vers ${receiverName} ?\n` +
-                `Frais de service : ${fee.toFixed(2)}€\n` +
+                `Frais de service (0.5%): ${fee.toFixed(2)}€\n` +
                 `Total : ${totalAmount.toFixed(2)}€`;
         } else {
             message = `Confirmez-vous le ${type.toLowerCase()} de ${amount.toFixed(2)}€ ?\n` +
-                `Frais de service : ${fee.toFixed(2)}€\n` +
+                `Frais de service (0.5%): ${fee.toFixed(2)}€\n` +
                 `Total : ${totalAmount.toFixed(2)}€`;
         }
 

@@ -64,9 +64,16 @@ public class ProfileController {
             }
             userService.updatePassword(user.getId(), currentPassword, newPassword);
             redirectAttributes.addFlashAttribute("successMessage", "Mot de passe mis à jour avec succès");
-        } catch (Exception e) {
-            redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
+            return "redirect:/profile";
         }
-        return "redirect:/profile";
+        catch (IllegalArgumentException e) {
+            // Erreurs de validation
+            redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
+            return "redirect:/profile";
+        }
+        catch (Exception e) {
+            redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
+            return "redirect:/profile";
+        }
     }
 }

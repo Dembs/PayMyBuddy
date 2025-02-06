@@ -51,6 +51,21 @@
             </tbody>
         </table>
     </div>
+    <div class="pagination" th:if="${connections != null and !connections.empty}">
+        <a th:if="${currentPage > 0}"
+           th:href="@{/connections(page=${currentPage - 1})}"
+           class="pagination-button">
+            &laquo; Précédent
+        </a>
+
+        <span class="current-page" th:text="${currentPage + 1}"></span>
+
+        <a th:if="${currentPage + 1 < totalPages}"
+           th:href="@{/connections(page=${currentPage + 1})}"
+           class="pagination-button">
+            Suivant &raquo;
+        </a>
+    </div>
 </div>
 </body>
 </html>

@@ -36,7 +36,11 @@ CREATE TABLE IF NOT EXISTS `pay_my_buddy`.`transaction` (
                                                             `receiver` INT NULL,
                                                             `description` VARCHAR(100) NOT NULL,
     `amount` DECIMAL(10,2) NOT NULL,
-    `fee` DECIMAL(10,2)  AS (ABS(amount) * 0.005) STORED,
+    `fee` DECIMAL(10,2) GENERATED ALWAYS AS (
+        case
+            WHEN type in ('VIREMENT SORTANT','TRANSFERT SORTANT') THEN ABS(amount) * 0.005
+        ELSE 0.00
+    end) STORED,
     `date` DATETIME NOT NULL,
     `type` VARCHAR(45) NOT NULL,
     PRIMARY KEY (`id`),
