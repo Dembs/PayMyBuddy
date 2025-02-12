@@ -30,62 +30,14 @@ public class TransactionService {
         return transactionRepository.save(transaction);
     }
 
-    public Transaction updateTransaction(int id, Transaction updatedTransaction) {
-        Transaction existingTransaction = transactionRepository.findById(id)
-                                                               .orElseThrow(() -> new IllegalArgumentException("Transaction non trouvée avec l'ID : " + id));
-
-        // Update specific fields
-        if (updatedTransaction.getDescription() != null) {
-            existingTransaction.setDescription(updatedTransaction.getDescription());
-        }
-        if (updatedTransaction.getAmount() != 0) {
-            existingTransaction.setAmount(updatedTransaction.getAmount());
-        }
-        if (updatedTransaction.getType() != null) {
-            existingTransaction.setType(updatedTransaction.getType());
-        }
-
-        return transactionRepository.save(existingTransaction);
-    }
-
-    public List<Transaction> getAllTransactions() {
-        return transactionRepository.findAll();
-    }
-
-    public Transaction getTransactionById(int id) {
-        return transactionRepository.findById(id)
-                                    .orElseThrow(() -> new IllegalArgumentException("Transaction non trouvée avec l'ID : " + id));
-    }
-
-    public void deleteTransaction(int id) {
-        if (!transactionRepository.existsById(id)) {
-            throw new IllegalArgumentException("Transaction non trouvée avec l'ID : " + id);
-        }
-        transactionRepository.deleteById(id);
-    }
-
-    // Additional methods for specific queries
-    public List<Transaction> getTransactionsBySender(int senderId) {
-        return transactionRepository.findBySenderId(senderId);
-    }
-
-    public List<Transaction> getTransactionsByReceiver(int receiverId) {
-        return transactionRepository.findByReceiverId(receiverId);
-    }
-
     public double getUserBalance(int userId){
         //select sum(amount) from transaction where sender = 1 or receiver = 1;
         List<Transaction> transactions = transactionRepository.findAllBySenderIdOrReceiverId(userId);
         double balance = 0.00;
 
         for (Transaction transaction : transactions) {
-            if (transaction.getReceiver().getId() == userId) {
-                // Pour les transferts entrants, on ajoute juste le montant sans frais
-                balance += transaction.getAmount();
-            } else if (transaction.getSender().getId() == userId) {
-                // Pour les transferts sortants, on soustrait le montant et les frais
-                balance += transaction.getAmount() - transaction.getFee();
-            }
+            balance += transaction.getAmount();
+            balance -= transaction.getFee();
         }
         return balance;
     }
@@ -109,7 +61,8 @@ public class TransactionService {
                                    String description, Integer receiverId) {
         User currentUser = userService.getUserById(userId);
         double balance = getUserBalance(userId);
-        double totalAmount = amount * 1.005;
+        double fee = amount *0.005;
+        double totalAmount = amount + fee;
 
         // Vérification du solde pour les opérations sortantes
         if ((type.equals("VIREMENT SORTANT") || type.equals("TRANSFERT"))
@@ -126,6 +79,7 @@ public class TransactionService {
         senderTransaction.setReceiver(receiver);
         senderTransaction.setDescription(description);
         senderTransaction.setAmount(-amount);
+        senderTransaction.setFee(fee);
         senderTransaction.setDate(new Timestamp(System.currentTimeMillis()));
         saveTransaction(senderTransaction);
 
@@ -136,6 +90,7 @@ public class TransactionService {
         receiverTransaction.setReceiver(receiver);
         receiverTransaction.setDescription(description);
         receiverTransaction.setAmount(amount);
+        receiverTransaction.setFee(0.0);
         receiverTransaction.setDate(new Timestamp(System.currentTimeMillis()));
         saveTransaction(receiverTransaction);
 
@@ -146,6 +101,7 @@ public class TransactionService {
         transaction.setReceiver(currentUser);
         transaction.setDescription(type);
         transaction.setAmount(type.equals("VIREMENT SORTANT") ? -amount : amount);
+        transaction.setFee(type.equals("VIREMENT SORTANT") ? fee : 0.0);
         transaction.setDate(new Timestamp(System.currentTimeMillis()));
         saveTransaction(transaction);
     }

@@ -3,9 +3,11 @@
 <head>
   <meta charset="UTF-8">
   <title>User Sign Up page</title>
+  <link rel="stylesheet" href="/css/style.css">
 </head>
-<body>
-<h2>User Sign Up</h2>
+<body class="auth-page">
+<div class="auth-container">
+<h2>Pay My Buddy</h2>
 
 <div th:if="${errorMessage}" class="error">
   <p th:text="${errorMessage}"></p>
@@ -13,24 +15,22 @@
 
 <form th:action="@{/signup}" method="post">
   <div class="form-group">
-    <label for="username">Username:</label>
-    <input type="text" id="username" name ="username" required >
+    <input type="text" id="username" name ="username" required placeholder="Username">
   </div>
 
   <div class="form-group">
-    <label for="email">Email:</label>
-    <input type="email" id="email" name="email" required >
+    <input type="email" id="email" name="email" required placeholder="Mail">
   </div>
 
   <div class="form-group">
-    <label for="password">Password:</label>
-    <input type="password" id="password" name="password" required>
+    <input type="password" id="password" name="password" required placeholder="Mot de passe">
   </div>
 
-  <button type="submit">Sign Up</button>
+  <button type="submit">S'inscrire</button>
 </form>
 <div class="login-link">
-  <p>Déjà un compte ?<a th:href="@{/login}">Se connecter</a></p>
+  <p>Déjà un compte ? <a th:href="@{/login}">Se connecter</a></p>
+</div>
 </div>
 </body>
 </html>

@@ -2,19 +2,20 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Profile page</title>
+    <title>Page de Profil</title>
+    <link rel="stylesheet" href="/css/style.css">
 </head>
-<body>
-<div class="profile-container">
-    <div class="nav-bar">
+<body class="nav-page">
+<div class="nav-bar">
+    <div class="logo">Pay My Buddy</div>
+    <div class="nav-links">
         <a th:href="@{/transfert}">Transférer</a>
         <a th:href="@{/profile}" class="active">Profil</a>
         <a th:href="@{/connections}">Ajouter Relation</a>
         <a th:href="@{/logout}">Se déconnecter</a>
     </div>
-
-    <h2>Mon Profil</h2>
-
+</div>
+<div class="profile-container">
     <div th:if="${successMessage}" class="alert success" th:text="${successMessage}"></div>
     <div th:if="${errorMessage}" class="alert error" th:text="${errorMessage}"></div>
 

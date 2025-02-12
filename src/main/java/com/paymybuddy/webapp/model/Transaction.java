@@ -35,7 +35,7 @@ public class Transaction {
     @Column(name = "amount",nullable = false)
     private double amount;
 
-    @Column(name = "fee",nullable = false, insertable = false)
+    @Column(name = "fee",nullable = false)
     private double fee;
 
     @NotNull

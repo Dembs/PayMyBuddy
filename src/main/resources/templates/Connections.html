@@ -3,13 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <title>Page d'ajout de relation</title>
+    <link rel="stylesheet" href="/css/style.css">
 </head>
-<body>
+<body class="nav-page">
 <div class="nav-bar">
+    <div class="logo">Pay My Buddy</div>
+    <div class="nav-links" >
     <a th:href="@{/transfert}" >Transférer</a>
     <a th:href="@{/profile}" >Profil</a>
     <a th:href="@{/connections}" class="active" >Ajouter Relation</a>
     <a th:href="@{/logout}" >Se déconnecter</a>
+    </div>
 </div>
 <div class="container">
     <h2>Chercher une relation</h2>
@@ -21,11 +25,9 @@
         <p th:text="${errorMessage}"></p>
     </div>
 
-    <form th:action="@{/connections}" method="post">
-        <div class="form-group">
+    <form th:action="@{/connections}" method="post" class="search-form">
             <input type="email" id="email" name="email" required
                    placeholder="Saisir une adresse mail">
-        </div>
         <button type="submit">Ajouter</button>
     </form>
 

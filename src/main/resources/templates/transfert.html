@@ -3,23 +3,25 @@
 <head>
     <meta charset="UTF-8">
     <title>Page Transfert</title>
+    <link rel="stylesheet" href="/css/style.css">
 </head>
-<body>
+<body class="nav-page">
 <div class="nav-bar">
-    <a th:href="@{/transfert}" class="active">Transférer</a>
-    <a th:href="@{/profile}">Profil</a>
-    <a th:href="@{/connections}">Ajouter Relation</a>
-    <a th:href="@{/logout}">Se déconnecter</a>
-</div>
-
-<div class="container">
+    <div class="logo">Pay My Buddy</div>
+        <div class="nav-links">
+            <a th:href="@{/transfert}" class="active">Transférer</a>
+            <a th:href="@{/profile}">Profil</a>
+            <a th:href="@{/connections}">Ajouter Relation</a>
+            <a th:href="@{/logout}">Se déconnecter</a>
+        </div>
+    </div>
+<div class="transfer-container">
 
     <div class="balance-section">
         <h3>Solde du compte</h3>
-        <p class="balance-amount" th:text="${#numbers.formatDecimal(balance, 1, 2) + ' €'}">0.00 €</p>
+        <p class="balance-amount" th:text="${#numbers.formatDecimal(balance, 1, 'WHITESPACE', 2, 'POINT') + ' €'}">0.00 €</p>
     </div>
     <div class="transfer-form">
-        <h3>Effectuer une opération</h3>
         <form th:action="@{/transfert/add}" method="post" onsubmit="return confirmTransaction(event)">
             <div class="form-group">
                 <label for="type">Type d'opération:</label>
@@ -30,7 +32,7 @@
                 </select>
             </div>
 
-            <div id="connection-field" style="display:none">
+            <div class="form-group"  id="connection-field" style="display:none">
                 <label for="receiver">Destinataire:</label>
                 <select id="receiver" name="receiverId" required>
                     <option value="">Sélectionnez une relation</option>
@@ -40,7 +42,7 @@
                 </select>
             </div>
 
-            <div id="description-field" class="form-group">
+            <div class="form-group" id="description-field">
                 <label for="description">Description:</label>
                 <input type="text" id="description" name="description">
             </div>
@@ -50,17 +52,19 @@
                 <input type="number"
                        id="amount"
                        name="amount"
-                       step="0.01"
+                       step="1.00"
                        min="1.00"
-                       value="0.00"
-                       placeholder="0.00 €"
+                       value="0"
+                       placeholder="0 €"
                        required
                        oninvalid="this.setCustomValidity('Le montant minimum est de 1€')"
                        oninput="this.setCustomValidity('')">
             </div>
 
+            <div class="form-group button-container">
+                <button type="submit">Payer</button>
+            </div>
 
-            <button type="submit">Payer</button>
         </form>
     </div>
     <div class="transfert-list">
@@ -70,7 +74,7 @@
             <p>Vous n'avez pas encore de transfert</p>
         </div>
 
-        <table th:if="${!#lists.isEmpty(transactions)}" class="transfert-table">
+        <table class="transactions-table">
             <thead>
             <tr>
                 <th>Relations</th>
@@ -91,26 +95,17 @@
                 </td>
                 <td th:text="${transaction.description}"></td>
                 <td th:text="${#dates.format(transaction.date,'dd/MM/yyyy HH:mm')}"></td>
-                <td th:text="${#numbers.formatDecimal(transaction.amount, 1, 2,'POINT') + ' €'}"></td>
+                <td th:text="${#numbers.formatDecimal(transaction.amount, 1,  'WHITESPACE', 2, 'POINT') + ' €'}"></td>
                 <td th:text="${transaction.type == 'TRANSFERT ENTRANT' ? '0.00 €':#numbers.formatDecimal(transaction.fee, 1, 2) + ' €'}"></td>
             </tr>
             </tbody>
         </table>
     </div>
-    <div class="pagination" th:if="${!#lists.isEmpty(transactions)}">
-        <a th:if="${currentPage > 0}"
-           th:href="@{/transfert(page=${currentPage - 1})}"
-           class="pagination-button">
-            &laquo; Précédent
-        </a>
 
+    <div class="pagination">
+        <a th:if="${currentPage > 0}" th:href="@{/transfert(page=${currentPage - 1})}" class="pagination-button">&laquo; Précédent</a>
         <span class="current-page" th:text="${currentPage + 1}"></span>
-
-        <a th:if="${currentPage + 1 < totalPages}"
-           th:href="@{/transfert(page=${currentPage + 1})}"
-           class="pagination-button">
-            Suivant &raquo;
-        </a>
+        <a th:if="${currentPage + 1 < totalPages}" th:href="@{/transfert(page=${currentPage + 1})}" class="pagination-button">Suivant &raquo;</a>
     </div>
 </div>
 
@@ -163,10 +158,15 @@
             message = `Confirmez-vous le transfert de ${amount.toFixed(2)}€ vers ${receiverName} ?\n` +
                 `Frais de service (0.5%): ${fee.toFixed(2)}€\n` +
                 `Total : ${totalAmount.toFixed(2)}€`;
-        } else {
+        } else if (type === 'VIREMENT SORTANT') {
             message = `Confirmez-vous le ${type.toLowerCase()} de ${amount.toFixed(2)}€ ?\n` +
                 `Frais de service (0.5%): ${fee.toFixed(2)}€\n` +
                 `Total : ${totalAmount.toFixed(2)}€`;
+        }
+        else {
+            message = `Confirmez-vous le ${type.toLowerCase()} de ${amount.toFixed(2)}€ ?\n` +
+                `Frais de service : 0 €\n` +
+                `Total : ${amount.toFixed(2)}€`;
         }
 
         if (confirm(message)) {
