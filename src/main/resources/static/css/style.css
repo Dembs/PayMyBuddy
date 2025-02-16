@@ -2,6 +2,7 @@
     margin: 0;
     padding: 0;
     box-sizing: border-box;
+    font-family: Inter, sans-serif;
 }
 
 /* Page Login/Signup */
@@ -33,23 +34,23 @@
     font-size: 20px;
     font-weight: bold;
     border-radius: 5px;
+    padding: 1em;
 }
 
 
-/* Layout général */
+/* format une fois connecté */
 .nav-page {
     background-color: #f5f5f5;
     min-height: 100vh;
 }
 
-/* Navigation */
 .nav-bar {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 20px 40px;
+    padding: 20px/* haut bas */ 40px /*gauche droite*/;
     max-width: 1200px;
-    margin: 0 auto;
+    margin: 0 /* marge haute/basse */ auto /* centrage horizontal */;
 }
 
 .logo {
@@ -123,7 +124,7 @@ button[type="submit"] {
 
 /* Page Profil */
 .profile-container {
-    max-width: 800px;
+    max-width: 400px;
     margin: 40px auto;
     padding: 20px;
 }
@@ -147,7 +148,33 @@ button[type="submit"] {
     gap: 10px;
     align-items: center;
 }
+.edit-mode button {
+    padding: 8px 20px;
+    margin: 0 5px;
+    font-size: 14px;
+    border: 1px solid #e0e0e0;
+    border-radius: 4px;
+    cursor: pointer;
+    min-width: 100px;
+}
 
+.edit-mode button[type="submit"] {
+    background-color: #1E90FF;
+    color: white;
+    border: none;
+}
+
+.edit-mode button[type="button"] {
+    background-color: #fff;
+    color: #333;
+}
+
+.button-group {
+    display: flex;
+    gap: 10px;
+    justify-content: flex-end;
+    margin-top: 15px;
+}
 /* Page Transfert */
 .transfer-container {
     max-width: 1200px;
@@ -183,7 +210,7 @@ button[type="submit"] {
 .transactions-table,
 .connections-table {
     width: 100%;
-    border-collapse: collapse;
+    border-collapse: collapse;/*espacement*/
     margin-top: 20px;
 }
 

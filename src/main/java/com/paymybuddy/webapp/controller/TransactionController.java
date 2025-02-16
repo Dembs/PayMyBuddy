@@ -1,8 +1,6 @@
 package com.paymybuddy.webapp.controller;
 
-import com.paymybuddy.webapp.model.Transaction;
 import com.paymybuddy.webapp.model.User;
-import com.paymybuddy.webapp.service.AccountService;
 import com.paymybuddy.webapp.service.TransactionService;
 import com.paymybuddy.webapp.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,8 +10,6 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import java.sql.Timestamp;
-import java.util.List;
 import java.util.Map;
 
 @Controller

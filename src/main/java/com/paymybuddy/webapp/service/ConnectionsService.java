@@ -44,7 +44,10 @@ public class ConnectionsService {
                 .orElseThrow(()-> new RuntimeException(friendEmail + " introuvable"));
 
         //Check to see if the connection already exists
-        if(user.getConnections().contains(friend)){
+        boolean connectionExists = user.getConnections().stream()
+                                       .anyMatch(connection -> connection.getId() == friend.getId());
+
+        if (connectionExists) {
             throw new RuntimeException("Contact déjà rajouté");
         }
 

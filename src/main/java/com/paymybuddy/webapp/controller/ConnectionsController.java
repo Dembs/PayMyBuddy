@@ -77,6 +77,5 @@ public class ConnectionsController {
             return "connections";
         }
 
-
     }
 }

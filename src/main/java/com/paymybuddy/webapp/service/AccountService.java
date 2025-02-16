@@ -23,33 +23,5 @@ public class AccountService {
         return accountRepository.save(account);
     }
 
-    public Optional<Account> getAccountById (int id){
-        return accountRepository.findById(id);
-    }
 
-    public List<Account> getAllAccounts (){
-        return accountRepository.findAll();
-    }
-
-    public boolean deleteAccount(int id) {
-        Optional<Account> existingAccount = accountRepository.findById(id);
-        if (existingAccount.isPresent()) {
-            accountRepository.deleteById(id);
-            return true;
-        }
-        throw new IllegalArgumentException("Compte non trouvé avec l'ID : " + id);
-    }
-
-    public Account updateAccount(int id, Account updatedAccount) {
-        // Find existing account
-        Account existingAccount = accountRepository.findById(id)
-                                                   .orElseThrow(() -> new IllegalArgumentException("Compte non trouvé avec l'ID : " + id));
-
-        // Ensure the user association remains the same
-        if (updatedAccount.getUser() != null) {
-            existingAccount.setUser(updatedAccount.getUser());
-        }
-        // Save and return the updated account
-        return accountRepository.save(existingAccount);
-    }
 }

@@ -33,7 +33,7 @@ public class SecurityConfig {
                     .loginPage("/login")
                     .usernameParameter("email")
                     .passwordParameter("password")
-                    .defaultSuccessUrl("/profile",true)
+                    .defaultSuccessUrl("/transfert",true)
                     .permitAll()
             )
                 .logout(logout -> logout
