@@ -47,7 +47,7 @@ class SignUpServiceTest {
 
     @Test
     void registerNewUserTest() {
-        when(userRepository.existsByEmail(testUserDTO.getEmail())).thenReturn(false);
+        when(userRepository.existsByEmail(testUserDTO.getEmail())).thenReturn(false); //Utilisateur pas enregistré encore
         when(passwordEncoder.encode(testUserDTO.getPassword())).thenReturn("encodedPassword");
         when(userRepository.save(any(User.class))).thenReturn(testUser);
         when(accountService.saveAccount(any(Account.class))).thenReturn(new Account());
@@ -61,7 +61,7 @@ class SignUpServiceTest {
     }
 
     @Test
-    void registerNewUserErrorTest() {
+    void registerNewUserEmailErrorTest() {
 
         when(userRepository.existsByEmail(testUserDTO.getEmail())).thenReturn(true);
 
@@ -69,6 +69,13 @@ class SignUpServiceTest {
                 signUpService.registerNewUser(testUserDTO)
         );
     }
+    @Test
+    void registerNewUserPasswordErrorTest() {
+        testUserDTO.setPassword("short");
 
+        assertThrows(NullPointerException.class, () ->
+                signUpService.registerNewUser(testUserDTO)
+        );
+    }
 
 }

@@ -65,22 +65,6 @@ class ProfileControllerTest {
         verify(redirectAttributes).addFlashAttribute("successMessage", "Email mis à jour");
     }
 
-   /* @Test
-    void updateProfileErrorTest() {
-        doThrow(new RuntimeException("Error message"))
-                .when(userService).updateUsername(anyInt(), anyString());
-
-        String viewName = profileController.updateProfile(
-                testUser,
-                "newUsername",
-                null,
-                redirectAttributes
-        );
-
-        assertEquals("redirect:/profile", viewName);
-        verify(redirectAttributes).addFlashAttribute("errorMessage", "Error message");
-    }
-*/
     @Test
     void updateProfilePasswordTest() {
         String viewName = profileController.updatePassword(

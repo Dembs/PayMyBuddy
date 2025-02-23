@@ -36,6 +36,7 @@ public class SignUpService {
         // Création et association d'un compte
         Account account = new Account();
         account.setUser(savedUser);
+        savedUser.setAccount(account);
         accountService.saveAccount(account);
 
         return savedUser;

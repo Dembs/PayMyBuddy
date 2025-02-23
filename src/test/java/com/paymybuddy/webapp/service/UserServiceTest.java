@@ -40,14 +40,11 @@ class UserServiceTest {
 
     @Test
     void updateUsernameTest() {
-        // Given
         when(userRepository.findById(1)).thenReturn(Optional.of(testUser));
         when(userRepository.existsByUsername("newUsername")).thenReturn(false);
 
-        // When
         userService.updateUsername(1, "newUsername");
 
-        // Then
         verify(userRepository).save(testUser);
         assertNotNull(testUser.getRealUsername());
         assertEquals("newUsername", testUser.getRealUsername());
@@ -55,76 +52,64 @@ class UserServiceTest {
     }
 
     @Test
-    void updateUsernameFailTest() {
-        // Given
+    void updateUsernameErrorTest() {
         when(userRepository.findById(1)).thenReturn(Optional.of(testUser));
         when(userRepository.existsByUsername("newUsername")).thenReturn(true);
 
-        // When/Then
+
         assertThrows(RuntimeException.class, () ->
                 userService.updateUsername(1, "newUsername")
         );
     }
     @Test
     void updateEmailTest() {
-        // Given
+
         String newEmail = "new@test.com";
         when(userRepository.findById(1)).thenReturn(Optional.of(testUser));
         when(userRepository.existsByEmail(newEmail)).thenReturn(false);
 
-        // When
         userService.updateEmail(1, newEmail);
 
-        // Then
         verify(userRepository).save(testUser);
         assertEquals(newEmail, testUser.getEmail());
     }
 
     @Test
     void updatePasswordTest() {
-        // Given
         when(userRepository.findById(1)).thenReturn(Optional.of(testUser));
         when(passwordEncoder.matches("currentPassword", "encodedOldPassword")).thenReturn(true);
         when(passwordEncoder.encode("newPassword")).thenReturn("encodedNewPassword");
 
-        // When
         userService.updatePassword(1, "currentPassword", "newPassword");
 
-        // Then
         verify(userRepository).save(testUser);
         verify(passwordEncoder).encode("newPassword");
     }
 
     @Test
-    void updatePasswordFailTest() {
-        // Given
+    void updatePasswordShortTest() {
         when(userRepository.findById(1)).thenReturn(Optional.of(testUser));
 
-        // When/Then
         assertThrows(IllegalArgumentException.class, () ->
                 userService.updatePassword(1, "current", "short")
         );
     }
 
     @Test
-    void loadUserByUsernameFailTest_WhenCurrentPasswordIncorrect() {
-        // Given
+    void updatePasswordMissmatchTest() {
         when(userRepository.findById(1)).thenReturn(Optional.of(testUser));
         when(passwordEncoder.matches("wrongPassword", "encodedOldPassword")).thenReturn(false);
 
-        // When/Then
         assertThrows(RuntimeException.class, () ->
                 userService.updatePassword(1, "wrongPassword", "newPassword")
         );
     }
     @Test
-    void loadUserByUsernameFailTest_WhenUserNotFound() {
-        // Given
+    void UserNotFoundTest() {
         String nonExistentEmail = "nonexistent@test.com";
         when(userRepository.findByEmail(nonExistentEmail))
                 .thenReturn(Optional.empty());
 
-        // When/Then
         assertThrows(UsernameNotFoundException.class, () ->
                 userService.loadUserByUsername(nonExistentEmail)
         );

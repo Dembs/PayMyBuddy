@@ -64,6 +64,9 @@ public class TransactionService {
         double fee = amount *0.005;
         double totalAmount = amount + fee;
 
+        if (amount <= 0) {
+            throw new IllegalArgumentException("Le montant doit être supérieur à 0");
+        }
         // Vérification du solde pour les opérations sortantes
         if ((type.equals("VIREMENT SORTANT") || type.equals("TRANSFERT"))
                 && totalAmount > balance) {

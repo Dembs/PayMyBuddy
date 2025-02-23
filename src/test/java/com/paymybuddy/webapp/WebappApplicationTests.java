@@ -1,11 +1,11 @@
 package com.paymybuddy.webapp;
 
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.TestPropertySource;
 
 @SpringBootTest
-@Disabled("Test désactivé temporairement")
+@TestPropertySource("classpath:application.properties")
 class WebappApplicationTests {
 
 	@Test
