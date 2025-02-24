@@ -51,6 +51,7 @@
     padding: 20px/* haut bas */ 40px /*gauche droite*/;
     max-width: 1200px;
     margin: 0 /* marge haute/basse */ auto /* centrage horizontal */;
+    font-weight: bold;
 }
 
 .logo {
@@ -104,8 +105,8 @@
     cursor: pointer;
 }
 button[type="submit"] {
-    background-color: #1E90FF;
-    color: white;
+    background-color: #0056b3;
+    color: #ffffff;
     border: none;
     border-radius: 4px;
     padding: 12px 25px;
