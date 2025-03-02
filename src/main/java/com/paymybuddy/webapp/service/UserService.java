@@ -70,10 +70,10 @@ public class UserService implements UserDetailsService {
         if (newPassword == null) {
             throw new IllegalArgumentException("Le nouveau mot de passe est requis");
         }
-        //longueur du mot de passe
+        /*//longueur du mot de passe
         if (newPassword.length() < 8) {
             throw new IllegalArgumentException("Le nouveau mot de passe doit contenir au moins 8 caractères");
-        }
+        }*/
 
         // nouveau mot de passe différent de l'ancien
         if (currentPassword.equals(newPassword)) {

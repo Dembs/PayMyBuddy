@@ -14,7 +14,15 @@
             <a th:href="@{/connections}">Ajouter Relation</a>
             <a th:href="@{/logout}">Se déconnecter</a>
         </div>
+</div>
+<!--<div class="messages">
+    <div th:if="${successMessage}" class="message success">
+        <p th:text="${successMessage}"></p>
     </div>
+    <div th:if="${errorMessage}" class="message error">
+        <p th:text="${errorMessage}"></p>
+    </div>
+</div>-->
 <div class="transfer-container">
 
     <div class="balance-section">
@@ -49,6 +57,7 @@
 
             <div class="form-group">
                 <label for="amount" id="amount-label">Montant:</label>
+                <div class="amount-input-container">
                 <input type="number"
                        id="amount"
                        name="amount"
@@ -61,6 +70,8 @@
                        required
                        oninvalid="this.setCustomValidity('Le montant minimum est de 1€')"
                        oninput="this.setCustomValidity('')">
+                    <span class="currency-symbol">€</span>
+                </div>
             </div>
 
             <div class="form-group button-container">
@@ -113,9 +124,11 @@
 
 </body>
 <script>
+    //Charge UpdateFormFields quand le page est chargée
     document.addEventListener('DOMContentLoaded', function() {
         updateFormFields();
     });
+    //Change l'affichage en fonction du type de transfert choisi
     function updateFormFields() {
         const type = document.getElementById('type').value;
         const connectionField = document.getElementById('connection-field');
@@ -156,7 +169,7 @@
 
         if (type === 'TRANSFERT') {
             const receiver = document.getElementById('receiver');
-            const receiverName = receiver.options[receiver.selectedIndex].text;
+            const receiverName = receiver.options[receiver.selectedIndex].text; //Sélectionne le texte récupéré dans le menu déroulant
             message = `Confirmez-vous le transfert de ${amount.toFixed(2)}€ vers ${receiverName} ?\n` +
                 `Frais de service (0.5%): ${fee.toFixed(2)}€\n` +
                 `Total : ${totalAmount.toFixed(2)}€`;

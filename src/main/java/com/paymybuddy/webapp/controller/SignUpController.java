@@ -3,11 +3,9 @@ package com.paymybuddy.webapp.controller;
 import com.paymybuddy.webapp.dto.UserDTO;
 import com.paymybuddy.webapp.model.User;
 import com.paymybuddy.webapp.service.SignUpService;
-import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 @Controller
@@ -29,7 +27,7 @@ public class SignUpController {
                                 Model model) {
         try {
             UserDTO userDTO = new UserDTO(email, password,username);
-            User registeredUser = signUpService.registerNewUser(userDTO);
+            signUpService.registerNewUser(userDTO);
 
             return "redirect:/login";
         } catch (RuntimeException e) {

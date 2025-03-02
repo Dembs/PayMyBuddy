@@ -72,7 +72,7 @@ class ConnectionsControllerTest {
         );
 
         assertEquals("redirect:/connections", viewName);
-        verify(model).addAttribute("successMessage", "Relation Rajoutée avec succes");
+        verify(redirectAttributes).addFlashAttribute("successMessage", "Relation rajoutée avec succes");
     }
 
     @Test
